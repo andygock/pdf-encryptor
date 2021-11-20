@@ -82,22 +82,18 @@ const encryptPDF = (inputArrayBuffer, password) => {
 
     QPDF.encrypt({
       logger: (text) => {
-        console.log(text);
+        // console.log(text);
       },
       arrayBuffer: inputArrayBuffer,
       userPassword: password,
       ownerPassword: password,
       callback: (err, arrayBuffer) => {
-        console.log("QPDF callback()");
-
         // note: there isn't a way to cancel the processing
         if (err) {
           reject(err);
         } else if (arrayBuffer === null) {
           reject(new Error("Unknown error occured"));
         } else {
-          console.log("resolve()", arrayBuffer);
-
           resolve(arrayBuffer);
         }
       },
