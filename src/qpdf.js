@@ -1,14 +1,11 @@
 /* eslint-env browser */
 
 (function () {
-// The QPDF Module
-  function QPDF (options) {
-    const {
-      logger = console.log.bind(console),
-      ready
-    } = options;
-    const path = QPDF.path || '';
-    let worker = new Worker(path + 'qpdf-worker.js');
+  // The QPDF Module
+  function QPDF(options) {
+    const { logger = console.log.bind(console), ready } = options;
+    const path = QPDF.path || "";
+    let worker = new Worker(path + "qpdf-worker.js");
 
     const listeners = {};
     let nListeners = 0;
@@ -26,8 +23,8 @@
 
       if (nListeners === 0) {
         setTimeout(function () {
-        // No new commands after 1 second?
-        // Then we terminate the worker.
+          // No new commands after 1 second?
+          // Then we terminate the worker.
           if (worker !== null && nListeners === 0) {
             worker.terminate();
             worker = null;
@@ -37,74 +34,83 @@
     };
 
     const qpdf = {
-      save (filename, arrayBuffer, callback) {
-        if (!worker) { return callback(new Error('worker terminated')); }
+      save(filename, arrayBuffer, callback) {
+        if (!worker) {
+          return callback(new Error("worker terminated"));
+        }
         addListener(filename, callback);
         worker.postMessage({
-          type: 'save',
+          type: "save",
           filename,
-          arrayBuffer
+          arrayBuffer,
         });
       },
-      load (filename, callback) {
-        if (!worker) { return callback(new Error('worker terminated')); }
+      load(filename, callback) {
+        if (!worker) {
+          return callback(new Error("worker terminated"));
+        }
         addListener(filename, callback);
         worker.postMessage({
-          type: 'load',
-          filename
+          type: "load",
+          filename,
         });
       },
-      execute (args, callback) {
-        if (!worker) { return callback(new Error('worker terminated')); }
-        addListener('execute', callback);
+      execute(args, callback) {
+        if (!worker) {
+          return callback(new Error("worker terminated"));
+        }
+        addListener("execute", callback);
         worker.postMessage({
-          type: 'execute',
-          args
+          type: "execute",
+          args,
         });
-      }
+      },
     };
 
     worker.onmessage = function (event) {
       const message = event.data;
 
       switch (message.type) {
-        case 'ready': {
-          logger('[qpdf] ready');
+        case "ready": {
+          logger("[qpdf] ready");
           if (ready) {
             ready(qpdf);
           }
           break;
         }
 
-        case 'stdout':
-          logger('[qpdf.worker] ' + message.line);
+        case "stdout":
+          logger("[qpdf.worker] " + message.line);
           break;
 
-        case 'saved': {
+        case "saved": {
           const filename = message.filename;
-          logger('[qpdf] ' + filename + ' saved');
+          logger("[qpdf] " + filename + " saved");
           callListener(filename, null);
           break;
         }
 
-        case 'loaded': {
+        case "loaded": {
           const { filename, arrayBuffer } = message;
-          logger('[qpdf] ' + filename + ' loaded (' + arrayBuffer.length + ')');
+          logger("[qpdf] " + filename + " loaded (" + arrayBuffer.length + ")");
           if (arrayBuffer) {
             callListener(filename, null, arrayBuffer);
           } else {
-            callListener(filename, new Error('File not found'));
+            callListener(filename, new Error("File not found"));
           }
           break;
         }
 
-        case 'executed': {
+        case "executed": {
           const { status } = message;
-          logger('[qpdf] exited with status ' + status);
+          logger("[qpdf] exited with status " + status);
           if (status !== 0) {
-            callListener('execute', new Error('QPDF exited with status ' + status));
+            callListener(
+              "execute",
+              new Error("QPDF exited with status " + status)
+            );
           } else {
-            callListener('execute', null);
+            callListener("execute", null);
           }
           break;
         }
@@ -118,7 +124,7 @@
     userPassword,
     ownerPassword,
     keyLength,
-    callback
+    callback,
   }) {
     const safeCallback = function (err, arg) {
       if (callback) {
@@ -131,18 +137,21 @@
     QPDF({
       logger,
       ready: function (qpdf) {
-        qpdf.save('input.pdf', arrayBuffer, safeCallback);
-        qpdf.execute([
-          '--encrypt',
-          userPassword || '',
-          ownerPassword || '',
-          String(keyLength || 256),
-          '--',
-          'input.pdf',
-          'output.pdf'
-        ], safeCallback);
-        qpdf.load('output.pdf', safeCallback);
-      }
+        qpdf.save("input.pdf", arrayBuffer, safeCallback);
+        qpdf.execute(
+          [
+            "--encrypt",
+            userPassword || "",
+            ownerPassword || "",
+            String(keyLength || 256),
+            "--",
+            "input.pdf",
+            "output.pdf",
+          ],
+          safeCallback
+        );
+        qpdf.load("output.pdf", safeCallback);
+      },
     });
   };
 
@@ -150,8 +159,8 @@
     QPDF({
       logger,
       ready: function (qpdf) {
-        qpdf.execute(['--help']);
-      }
+        qpdf.execute(["--help"]);
+      },
     });
   };
 
@@ -166,7 +175,7 @@
   };
 
   QPDF.arrayBufferToBase64 = function (buffer) {
-    let binary = '';
+    let binary = "";
     const bytes = new Uint8Array(buffer);
     const len = bytes.byteLength;
     for (let i = 0; i < len; i++) {
