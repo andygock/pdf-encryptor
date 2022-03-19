@@ -2,18 +2,28 @@
 
 Encrypt PDF files in the web browser using [QPDF.js](https://github.com/j3k0/qpdf.js).
 
+Install [pnpm](https://pnpm.io/)
+
+    npm install -g pnpm
+
 Install dependencies
 
-    yarn
+    pnpm install
 
-Run development server with [Parcel 2](https://parceljs.org/).
+Start development server
 
-    yarn start
+    pnpm start
 
-Build production files into `dist`
+Build for production into `dist/`
 
-    yarn build
+    pnpm build
 
-Clean all caches and build files
+If required, use the following Netlify build command
 
-    yarn clean
+    pnpm build || ( npm install pnpm && pnpm build )
+
+## Demo
+
+<https://pdf-encryptor.netlify.app>
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/40cb8b63-9f94-43f5-a38e-919f9cc98a43/deploy-status)](https://app.netlify.com/sites/pdf-encryptor/deploys)

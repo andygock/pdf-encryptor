@@ -2,17 +2,27 @@
 
 (function () {
   // The QPDF Module
+
+  // let worker = new Worker(new URL("http://localhost:3000/qpdf-worker.js"));
+
   function QPDF(options) {
     const { logger = console.log.bind(console), ready } = options;
     const path = QPDF.path || "";
-    let worker = new Worker(path + "qpdf-worker.js");
+
+    // let worker = new Worker(path + "qpdf-worker.js");
+
+    let worker = new Worker(new URL("http://localhost:3000/qpdf-worker.js"));
+
+    console.log("new worker", worker);
 
     const listeners = {};
     let nListeners = 0;
+
     const addListener = function (id, fn) {
       listeners[id] = fn;
       nListeners += 1;
     };
+
     const callListener = function (id, err, arg) {
       const fn = listeners[id];
       if (fn) {
@@ -26,6 +36,8 @@
           // No new commands after 1 second?
           // Then we terminate the worker.
           if (worker !== null && nListeners === 0) {
+            console.log("worker terminated");
+
             worker.terminate();
             worker = null;
           }
@@ -113,6 +125,10 @@
             callListener("execute", null);
           }
           break;
+        }
+
+        default: {
+          logger("[qpdf] other message " + message);
         }
       }
     };

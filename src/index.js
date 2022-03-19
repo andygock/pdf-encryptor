@@ -82,7 +82,7 @@ const encryptPDF = (inputArrayBuffer, password) => {
 
     QPDF.encrypt({
       logger: (text) => {
-        // console.log(text);
+        console.log(text);
       },
       arrayBuffer: inputArrayBuffer,
       userPassword: password,
