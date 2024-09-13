@@ -24,6 +24,4 @@ If required, use the following Netlify build command
 
 ## Demo
 
-<https://pdf-encryptor.netlify.app>
-
-[![Netlify Status](https://api.netlify.com/api/v1/badges/40cb8b63-9f94-43f5-a38e-919f9cc98a43/deploy-status)](https://app.netlify.com/sites/pdf-encryptor/deploys)
+<https://andygock.github.io/pdf-encryptor/>
